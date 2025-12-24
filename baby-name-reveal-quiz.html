@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Name Reveal 💛</title>
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ===== SCREENS ===== */
+        .screen {
+            padding: 60px 40px;
+            text-align: center;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== LANDING SCREEN ===== */
+        .landing-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .emoji {
+            font-size: 48px;
+            display: block;
+            margin: 30px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* ===== QUIZ SCREEN ===== */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .question-text {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 40px;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .answers {
+            display: grid;
+            gap: 16px;
+        }
+
+        .answer-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .answer-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .answer-card:hover::before {
+            left: 100%;
+        }
+
+        .answer-card.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+            animation: pulse 0.4s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ===== REWARD SCREEN ===== */
+        .reward-message {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .gift-box {
+            font-size: 100px;
+            display: inline-block;
+            animation: giftShake 0.5s ease-in-out 3;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes giftShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .unlock-btn {
+            margin-top: 30px;
+        }
+
+        /* ===== NAME REVEAL SCREEN ===== */
+        .reveal-container {
+            position: relative;
+        }
+
+        .name-reveal {
+            font-size: 64px;
+            font-family: 'Brush Script MT', cursive, serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 40px 0;
+            animation: nameGlow 2s ease-in-out infinite;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        @keyframes nameGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6)); }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #666;
+            font-style: italic;
+            margin-top: 30px;
+        }
+
+        .heart {
+            display: inline-block;
+            color: #e74c3c;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+        }
+
+        .restart-btn {
+            margin-top: 40px;
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .restart-btn:hover {
+            background: #d0d0d0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===== CONFETTI ===== */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .screen {
+                padding: 40px 24px;
+            }
+
+            .landing-title {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .name-reveal {
+                font-size: 48px;
+            }
+
+            .gift-box {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LANDING SCREEN -->
+        <div class="screen active" id="landing">
+            <span class="emoji">💛</span>
+            <h1 class="landing-title">A little game before a big reveal</h1>
+            <button class="btn" onclick="startQuiz()">Start the Quiz</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div class="screen" id="quiz">
+            <div class="progress-container">
+                <p class="progress-text" id="progressText">Question 1 of 5</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            <h2 class="question-text" id="questionText"></h2>
+            <div class="answers" id="answersContainer"></div>
+        </div>
+
+        <!-- REWARD SCREEN -->
+        <div class="screen" id="reward">
+            <h2 class="reward-message">Congratulations! You unlocked the name 🎉</h2>
+            <div class="gift-box" id="giftBox">🎁</div>
+            <br>
+            <button class="btn unlock-btn" onclick="revealName()">Open the Gift</button>
+        </div>
+
+        <!-- NAME REVEAL SCREEN -->
+        <div class="screen" id="reveal">
+            <div class="reveal-container">
+                <span class="emoji">✨</span>
+                <div class="name-reveal" id="babyName">Aarav</div>
+                <span class="emoji">✨</span>
+                <p class="subtitle">With love, Appa & Amma <span class="heart">❤️</span></p>
+                <button class="btn restart-btn" onclick="restartQuiz()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== QUIZ DATA =====
+        // Array of quiz questions with multiple choice answers
+        const quizData = [
+            {
+                question: "What do you think makes a perfect family moment?",
+                answers: [
+                    "Laughing together over silly jokes",
+                    "Peaceful evenings watching the sunset",
+                    "Adventures and exploring new places",
+                    "Cozy cuddles and bedtime stories"
+                ]
+            },
+            {
+                question: "If you could give our baby one superpower, what would it be?",
+                answers: [
+                    "The power of kindness to brighten everyone's day",
+                    "Endless curiosity to explore the world",
+                    "The ability to make anyone smile",
+                    "Wisdom beyond their years"
+                ]
+            },
+            {
+                question: "What's the most important value to pass on?",
+                answers: [
+                    "Compassion and empathy for others",
+                    "Courage to chase their dreams",
+                    "Joy in the simple things",
+                    "Gratitude for every blessing"
+                ]
+            },
+            {
+                question: "How do you imagine our baby's laughter?",
+                answers: [
+                    "Contagious giggles that fill the room",
+                    "Soft chuckles that warm your heart",
+                    "Loud belly laughs of pure joy",
+                    "Gentle coos of happiness"
+                ]
+            },
+            {
+                question: "What would be the perfect first word?",
+                answers: [
+                    "Appa (Dad)",
+                    "Amma (Mom)",
+                    "Love",
+                    "Happy"
+                ]
+            }
+        ];
+
+        // ===== STATE MANAGEMENT =====
+        let currentQuestionIndex = 0;
+        let selectedAnswers = []; // Track user's answers (optional for future use)
+
+        // ===== SCREEN NAVIGATION =====
+        // Function to switch between different screens with smooth animation
+        function showScreen(screenId) {
+            // Hide all screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show the target screen with fade-in animation
+            setTimeout(() => {
+                document.getElementById(screenId).classList.add('active');
+            }, 100);
+        }
+
+        // ===== QUIZ FUNCTIONS =====
+        // Initialize and start the quiz
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            selectedAnswers = [];
+            showScreen('quiz');
+            displayQuestion();
+        }
+
+        // Display current question and answers
+        function displayQuestion() {
+            const question = quizData[currentQuestionIndex];
+            
+            // Update progress indicator
+            document.getElementById('progressText').textContent = 
+                `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            
+            // Update progress bar
+            const progressPercentage = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+            
+            // Display question text
+            document.getElementById('questionText').textContent = question.question;
+            
+            // Create answer cards
+            const answersContainer = document.getElementById('answersContainer');
+            answersContainer.innerHTML = ''; // Clear previous answers
+            
+            question.answers.forEach((answer, index) => {
+                const answerCard = document.createElement('div');
+                answerCard.className = 'answer-card';
+                answerCard.textContent = answer;
+                answerCard.onclick = () => selectAnswer(index, answer);
+                answersContainer.appendChild(answerCard);
+            });
+        }
+
+        // Handle answer selection
+        function selectAnswer(answerIndex, answerText) {
+            // Store the selected answer
+            selectedAnswers.push(answerText);
+            
+            // Visual feedback: highlight selected card
+            const cards = document.querySelectorAll('.answer-card');
+            cards[answerIndex].classList.add('selected');
+            
+            // Play selection sound effect (optional - browser compatible)
+            playSound();
+            
+            // Move to next question after a brief delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                // Check if quiz is complete
+                if (currentQuestionIndex >= quizData.length) {
+                    showRewardScreen();
+                } else {
+                    displayQuestion();
+                }
+            }, 600); // Delay to show selection animation
+        }
+
+        // ===== REWARD & REVEAL =====
+        // Show the reward screen after quiz completion
+        function showRewardScreen() {
+            showScreen('reward');
+            // Animate the gift box
+            const giftBox = document.getElementById('giftBox');
+            giftBox.style.animation = 'giftShake 0.5s ease-in-out 3';
+        }
+
+        // Reveal the baby name with celebration
+        function revealName() {
+            showScreen('reveal');
+            createConfetti();
+            playSound(true); // Play special sound for reveal
+        }
+
+        // ===== CONFETTI ANIMATION =====
+        // Create confetti particles for celebration effect
+        function createConfetti() {
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a'];
+            const confettiCount = 100;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    // Random positioning and styling
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 30); // Stagger the confetti creation
+            }
+        }
+
+        // ===== SOUND EFFECTS =====
+        // Simple sound effect using Web Audio API
+        function playSound(isReveal = false) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Different sounds for selection vs reveal
+                if (isReveal) {
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                } else {
+                    oscillator.frequency.value = 600;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                }
+            } catch (e) {
+                // Silently fail if audio is not supported
+                console.log('Audio not supported');
+            }
+        }
+
+        // ===== RESTART FUNCTION =====
+        // Reset quiz to initial state
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            selectedAnswers = [];
+            showScreen('landing');
+        }
+
+        // ===== CUSTOMIZATION NOTE =====
+        // TO CUSTOMIZE THE BABY NAME:
+        // Change the text in line 302: <div class="name-reveal" id="babyName">Aarav</div>
+        // Replace "Aarav" with your baby's name
+        
+        // TO CUSTOMIZE QUESTIONS:
+        // Edit the quizData array (lines 282-323) with your own questions and answers
+        
+        // TO CUSTOMIZE COLORS:
+        // Update the gradient colors in the CSS (search for #667eea and #764ba2)
+    </script>
+</body>
+</html>
